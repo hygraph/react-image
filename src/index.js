@@ -1,23 +1,113 @@
 import React from 'react'
-import 'whatwg-fetch'
 import PropTypes from 'prop-types'
-
-import Img from './Img'
-
-import listenToIntersections from './utils/intersectionObserver'
-import inImageCache from './utils/simpleCache'
-import isWebpSupported from './utils/webpSupport'
 
 const baseURI = 'https://media.graphcms.com/'
 const thumbTransform = 'resize=w:20,h:20,fit:crop/blur=amount:2'
 
 const thumbImg = handle => `${baseURI}${thumbTransform}/compress/${handle}`
-
 const fullImg = (transforms = '', handle) =>
   `${baseURI}${transforms}/compress/${handle}`
-
 const aspectRatio = (width, height) => width / height
 
+// Cache if we've seen an image before so we don't
+// lazy-load & fade in on subsequent mounts.
+const imageCache = {}
+const inImageCache = props => {
+  const { handle } = props
+
+  if (imageCache[handle]) {
+    return true
+  }
+  imageCache[handle] = true
+  return false
+}
+
+// Intersection Observer
+let io
+const listeners = []
+function getIO() {
+  if (
+    typeof io === `undefined` &&
+    typeof window !== `undefined` &&
+    window.IntersectionObserver
+  ) {
+    io = new window.IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          listeners.forEach(l => {
+            if (l[0] === entry.target) {
+              // Edge doesn't currently support isIntersecting, so also test for an intersectionRatio > 0
+              if (entry.isIntersecting || entry.intersectionRatio > 0) {
+                io.unobserve(l[0])
+                l[1]()
+              }
+            }
+          })
+        })
+      },
+      { rootMargin: `200px` }
+    )
+  }
+
+  return io
+}
+const listenToIntersections = (el, cb) => {
+  getIO().observe(el)
+  listeners.push([el, cb])
+  console.log(listeners)
+}
+
+// Check for Webp support
+let isWebpSupportedCache = null
+const isWebpSupported = () => {
+  if (isWebpSupportedCache !== null) {
+    return isWebpSupportedCache
+  }
+
+  const elem =
+    typeof window !== `undefined` ? window.document.createElement(`canvas`) : {}
+  if (elem.getContext && elem.getContext(`2d`)) {
+    isWebpSupportedCache =
+      elem.toDataURL(`image/webp`).indexOf(`data:image/webp`) === 0
+  } else {
+    isWebpSupportedCache = false
+  }
+
+  return isWebpSupportedCache
+}
+
+const Img = props => {
+  const { opacity, onLoad, transitionDelay, ...otherProps } = props
+  return (
+    <img
+      {...otherProps}
+      onLoad={onLoad}
+      style={{
+        position: `absolute`,
+        top: 0,
+        left: 0,
+        transition: `opacity 0.5s`,
+        transitionDelay,
+        opacity,
+        width: `100%`,
+        height: `100%`,
+        objectFit: `cover`,
+        objectPosition: `center`
+      }}
+    />
+  )
+}
+
+Img.defaultProps = {
+  transitionDelay: '',
+  onLoad: () => {}
+}
+
+Img.propTypes = {
+  opacity: PropTypes.oneOf([0, 1]).isRequired,
+  transitionDelay: PropTypes.string,
+  onLoad: PropTypes.func
+}
 class Image extends React.Component {
   constructor(props) {
     super(props)

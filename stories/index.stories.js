@@ -1,15 +1,19 @@
 import React from 'react'
-
 import { storiesOf } from '@storybook/react'
 
 import Image from '../src'
-
-const testImage = {
-  handle: 'MtF5PNN0QCWl2kAx3NzW',
-  height: 853,
-  width: 1280
-}
+import vinylbaseImgs from './vinylbaseImgs'
 
 storiesOf('Image', module).add('sample', () => (
-  <Image title="Sample" alt="Sample" image={testImage} withWebp />
+  <div>
+    {vinylbaseImgs.map(image => (
+      <Image
+        key={image.handle}
+        title="Sample"
+        alt="Sample"
+        image={image}
+        withWebp
+      />
+    ))}
+  </div>
 ))
