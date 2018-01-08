@@ -13,12 +13,12 @@
     "@storybook/addon-links": "^3.3.6",
     "@storybook/react": "^3.3.6",
     "babel-core": "^6.26.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-react": "^6.24.1",
     "eslint": "^4.14.0",
     "eslint-config-blazity": "^1.0.4",
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
-    "react-dom": "^16.2.0",
-    "whatwg-fetch": "^2.0.3"
+    "react-dom": "^16.2.0"
   }
 }

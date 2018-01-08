@@ -16,6 +16,8 @@ const thumbImg = handle => `${baseURI}${thumbTransform}/compress/${handle}`
 const fullImg = (transforms = '', handle) =>
   `${baseURI}${transforms}/compress/${handle}`
 
+const aspectRatio = (width, height) => width / height
+
 class Image extends React.Component {
   constructor(props) {
     super(props)
@@ -51,9 +53,11 @@ class Image extends React.Component {
       imgLoaded,
       IOSupported
     }
+
+    this.handleRef = this.handleRef.bind(this)
   }
 
-  handleRef = ref => {
+  handleRef(ref) {
     if (this.state.IOSupported && ref) {
       listenToIntersections(ref, () => {
         this.setState({ isVisible: true, imgLoaded: false })
@@ -87,7 +91,7 @@ class Image extends React.Component {
       // Use webp by default if browser supports it
       if (isWebpSupported()) {
         finalSrc = fullImg(
-          `${withWebp && 'output=format:webp/'}${transforms}`,
+          `${transforms}${withWebp && '/output=format:webp'}`,
           handle
         )
       }
@@ -116,7 +120,7 @@ class Image extends React.Component {
             <div
               style={{
                 width: '100%',
-                paddingBottom: `${100 / (height / width)}%`
+                paddingBottom: `${100 / aspectRatio(width, height)}%`
               }}
             />
 
@@ -154,7 +158,7 @@ class Image extends React.Component {
                 alt={alt}
                 title={title}
                 src={finalSrc}
-                opacity={this.state.imgLoaded || this.props.fadeIn ? 0 : 1}
+                opacity={this.state.imgLoaded || !this.props.fadeIn ? 1 : 0}
                 onLoad={() => {
                   this.state.IOSupported && this.setState({ imgLoaded: true })
                   this.props.onLoad && this.props.onLoad()
@@ -180,15 +184,15 @@ Image.defaultProps = {
   title: '',
   outerWrapperClassName: '',
   className: '',
-  backgroundColor: false,
+  backgroundColor: null,
   onLoad: () => {}
 }
 
 Image.propTypes = {
   image: PropTypes.shape({
     handle: PropTypes.string,
-    height: PropTypes.string,
-    width: PropTypes.string
+    height: PropTypes.number,
+    width: PropTypes.number
   }).isRequired,
   withWebp: PropTypes.bool,
   blurryPlaceholder: PropTypes.bool,
