@@ -9,9 +9,9 @@
     "build-storybook": "build-storybook"
   },
   "devDependencies": {
-    "@storybook/addon-actions": "^3.3.3",
-    "@storybook/addon-links": "^3.3.3",
-    "@storybook/react": "^3.3.3",
+    "@storybook/addon-actions": "^3.3.6",
+    "@storybook/addon-links": "^3.3.6",
+    "@storybook/react": "^3.3.6",
     "babel-core": "^6.26.0",
     "babel-preset-react": "^6.24.1",
     "eslint": "^4.14.0",

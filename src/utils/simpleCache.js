@@ -3,12 +3,12 @@
 
 const imageCache = {}
 const inImageCache = props => {
-  const { src } = props
+  const { handle } = props
 
-  if (imageCache[src]) {
+  if (imageCache[handle]) {
     return true
   }
-  imageCache[src] = true
+  imageCache[handle] = true
   return false
 }
 
