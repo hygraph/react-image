@@ -1,0 +1,18 @@
+{
+  "extends": ["blazity"],
+  "rules": {
+    "import/no-extraneous-dependencies": 0,
+    "jsx-a11y/alt-text": 0,
+    "react/no-danger": 0
+  },
+  "overrides": [
+    {
+      "files": "**/*.stories.js",
+      "rules": {
+        "import/extensions": 0,
+        "import/no-extraneous-dependencies": 0,
+        "import/no-unresolved": 0
+      }
+    }
+  ]
+}

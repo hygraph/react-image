@@ -3,14 +3,22 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "author": "Hugo Meissner <hugomeissner@icloud.com>",
+  "scripts": {
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
+  },
   "devDependencies": {
+    "@storybook/addon-actions": "^3.3.3",
+    "@storybook/addon-links": "^3.3.3",
+    "@storybook/react": "^3.3.3",
     "babel-core": "^6.26.0",
     "babel-preset-react": "^6.24.1",
+    "eslint": "^4.14.0",
+    "eslint-config-blazity": "^1.0.4",
+    "prop-types": "^15.6.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "rollup": "^0.53.3",
-    "rollup-plugin-babel": "^3.0.3",
-    "rollup-plugin-vue": "^3.0.0",
-    "uglifyjs": "^2.4.11"
+    "whatwg-fetch": "^2.0.3"
   }
 }
