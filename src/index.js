@@ -2,21 +2,19 @@ import React from 'react'
 import 'whatwg-fetch'
 import PropTypes from 'prop-types'
 
-import noscriptImg from './utils/noscriptImg'
 import Img from './Img'
 
-import listenToIntersections from './utils/IntersectionObserver'
+import listenToIntersections from './utils/intersectionObserver'
 import inImageCache from './utils/simpleCache'
 import isWebpSupported from './utils/webpSupport'
 
-const baseURI = 'https://media.graphcms.com/compress/'
+const baseURI = 'https://media.graphcms.com/'
 const thumbTransform = 'resize=w:20,h:20,fit:crop/blur=amount:2'
 
-const thumbImg = handle => `${baseURI}${thumbTransform}/${handle}`
+const thumbImg = handle => `${baseURI}${thumbTransform}/compress/${handle}`
 
-const fullImg = (transforms = '', handle) => `${baseURI}${transforms}/${handle}`
-
-const aspectRatio = (height, width) => height / width
+const fullImg = (transforms = '', handle) =>
+  `${baseURI}${transforms}/compress/${handle}`
 
 class Image extends React.Component {
   constructor(props) {
@@ -69,12 +67,12 @@ class Image extends React.Component {
       alt,
       className,
       outerWrapperClassName,
-      style = {},
+      style,
       image: { handle, height, width },
+      withWebp,
       transforms,
       blurryPlaceholder,
       backgroundColor
-      // } = convertProps(this.props)
     } = this.props
 
     let bgColor
@@ -85,27 +83,30 @@ class Image extends React.Component {
     }
 
     if (handle) {
+      let finalSrc = fullImg(transforms, handle)
       // Use webp by default if browser supports it
       if (isWebpSupported()) {
-        // TODO
+        finalSrc = fullImg(
+          `${withWebp && 'output=format:webp/'}${transforms}`,
+          handle
+        )
       }
 
       // The outer div is necessary to reset the z-index to 0.
       return (
         <div
-          className={`${outerWrapperClassName ||
-            ``} graphcms-image-outer-wrapper`}
+          className={`${outerWrapperClassName} graphcms-image-outer-wrapper`}
           style={{
             zIndex: 0,
             // Let users set component to be absolutely positioned.
-            position: style.position === `absolute` ? `initial` : `relative`
+            position: style.position === 'absolute' ? 'initial' : 'relative'
           }}
         >
           <div
-            className={`${className || ``} graphcms-image-wrapper`}
+            className={`${className} graphcms-image-wrapper`}
             style={{
-              position: `relative`,
-              overflow: `hidden`,
+              position: 'relative',
+              overflow: 'hidden',
               zIndex: 1,
               ...style
             }}
@@ -114,8 +115,8 @@ class Image extends React.Component {
             {/* Preserve the aspect ratio. */}
             <div
               style={{
-                width: `100%`,
-                paddingBottom: `${100 / aspectRatio(height, width)}%`
+                width: '100%',
+                paddingBottom: `${100 / (height / width)}%`
               }}
             />
 
@@ -136,11 +137,11 @@ class Image extends React.Component {
                 title={title}
                 style={{
                   backgroundColor: bgColor,
-                  position: `absolute`,
+                  position: 'absolute',
                   top: 0,
                   bottom: 0,
                   opacity: this.state.imgLoaded ? 0 : 1,
-                  transitionDelay: `0.25s`,
+                  transitionDelay: '0.25s',
                   right: 0,
                   left: 0
                 }}
@@ -152,7 +153,7 @@ class Image extends React.Component {
               <Img
                 alt={alt}
                 title={title}
-                src={fullImg(transforms, handle)}
+                src={finalSrc}
                 opacity={this.state.imgLoaded || this.props.fadeIn ? 0 : 1}
                 onLoad={() => {
                   this.state.IOSupported && this.setState({ imgLoaded: true })
@@ -160,13 +161,6 @@ class Image extends React.Component {
                 }}
               />
             )}
-
-            {/* Show the original image during server-side rendering if JavaScript is disabled */}
-            <noscript
-              dangerouslySetInnerHTML={{
-                __html: noscriptImg({ alt, title, height, width, handle })
-              }}
-            />
           </div>
         </div>
       )
@@ -178,9 +172,16 @@ class Image extends React.Component {
 
 Image.defaultProps = {
   blurryPlaceholder: true,
+  withWebp: true,
+  style: {},
   transforms: '',
   fadeIn: true,
-  alt: ``
+  alt: '',
+  title: '',
+  outerWrapperClassName: '',
+  className: '',
+  backgroundColor: false,
+  onLoad: () => {}
 }
 
 Image.propTypes = {
@@ -189,6 +190,7 @@ Image.propTypes = {
     height: PropTypes.string,
     width: PropTypes.string
   }).isRequired,
+  withWebp: PropTypes.bool,
   blurryPlaceholder: PropTypes.bool,
   transforms: PropTypes.string,
   fadeIn: PropTypes.bool,
@@ -200,7 +202,6 @@ Image.propTypes = {
     PropTypes.object
   ]),
   style: PropTypes.object,
-  position: PropTypes.string,
   backgroundColor: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   onLoad: PropTypes.func
 }
