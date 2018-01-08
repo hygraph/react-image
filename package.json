@@ -8,7 +8,7 @@
     "build": "babel src --out-dir .",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "prepublish": "npm run build"
+    "prepare": "npm run build"
   },
   "devDependencies": {
     "@storybook/addon-actions": "^3.3.6",
