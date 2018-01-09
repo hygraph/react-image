@@ -13,8 +13,7 @@ const aspectRatio = (width, height) => width / height
 // lazy-load & fade in on subsequent mounts.
 const imageCache = {}
 const inImageCache = props => {
-  const { handle } = props
-
+  const { image: { handle } } = props
   if (imageCache[handle]) {
     return true
   }
@@ -54,7 +53,6 @@ function getIO() {
 const listenToIntersections = (el, cb) => {
   getIO().observe(el)
   listeners.push([el, cb])
-  console.log(listeners)
 }
 
 // Check for Webp support
