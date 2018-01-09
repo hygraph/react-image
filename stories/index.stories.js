@@ -17,3 +17,5 @@ storiesOf('Image', module).add('sample', () => (
     ))}
   </div>
 ))
+
+storiesOf('Foo', module).add('bar', () => <h1>Foobar</h1>)
