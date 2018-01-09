@@ -2,9 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 import Img from './Img'
-import listenToIntersections from './utils/listenToIntersections'
-import isWebpSupported from './utils/isWebpSupported'
-import inImageCache from './utils/inImageCache'
+import listenToIntersections from './listenToIntersections'
+import isWebpSupported from './isWebpSupported'
+import inImageCache from './inImageCache'
 
 const baseURI = 'https://media.graphcms.com/'
 const thumbTrans = 'resize=w:20,h:20,fit:crop/blur=amount:2'
