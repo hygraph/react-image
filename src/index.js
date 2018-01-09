@@ -2,12 +2,13 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 const baseURI = 'https://media.graphcms.com/'
-const thumbTransform = 'resize=w:20,h:20,fit:crop/blur=amount:2'
+const thumbTrans = 'resize=w:20,h:20,fit:crop/blur=amount:2'
 
-const thumbImg = handle => `${baseURI}${thumbTransform}/compress/${handle}`
-const fullImg = (transforms = '', handle) =>
-  `${baseURI}${transforms}/compress/${handle}`
-const aspectRatio = (width, height) => width / height
+const thumbImg = (handle, webp = '') =>
+  `${baseURI}${thumbTrans}/${webp && 'output=format:webp/'}compress/${handle}`
+
+const fullImg = (handle, transforms = '', webp = '') =>
+  `${baseURI}${transforms}/${webp && 'output=format:webp/'}compress/${handle}`
 
 // Cache if we've seen an image before so we don't
 // lazy-load & fade in on subsequent mounts.
@@ -176,12 +177,11 @@ class Image extends React.Component {
 
     if (handle) {
       let finalSrc = fullImg(transforms, handle)
+      let finalThumb = thumbImg(handle)
       // Use webp by default if browser supports it
-      if (isWebpSupported()) {
-        finalSrc = fullImg(
-          `${transforms}${withWebp && '/output=format:webp'}`,
-          handle
-        )
+      if (isWebpSupported() && withWebp) {
+        finalSrc = fullImg(handle, transforms, true)
+        finalThumb = thumbImg(handle, true)
       }
 
       // The outer div is necessary to reset the z-index to 0.
@@ -208,7 +208,7 @@ class Image extends React.Component {
             <div
               style={{
                 width: '100%',
-                paddingBottom: `${100 / aspectRatio(width, height)}%`
+                paddingBottom: `${100 / (width / height)}%`
               }}
             />
 
@@ -217,7 +217,7 @@ class Image extends React.Component {
               <Img
                 alt={alt}
                 title={title}
-                src={thumbImg(handle)}
+                src={finalThumb}
                 opacity={this.state.imgLoaded ? 0 : 1}
                 transitionDelay="0.25s"
               />
@@ -273,7 +273,7 @@ Image.defaultProps = {
   outerWrapperClassName: '',
   className: '',
   backgroundColor: null,
-  onLoad: () => {}
+  onLoad() {}
 }
 
 Image.propTypes = {

@@ -123,25 +123,5 @@ export default [
     height: 829,
     width: 1280,
     handle: 'oegJr5bSk685KtsHkm1Q'
-  },
-  {
-    height: 395,
-    width: 702,
-    handle: 'TnWdKp6MRzOhjjlSIBvz'
-  },
-  {
-    height: 503,
-    width: 436,
-    handle: 'RPS6hcuqTipYYCFk4qtj'
-  },
-  {
-    height: 800,
-    width: 800,
-    handle: '7FlqIg31QFCbrNcLmiNQ'
-  },
-  {
-    height: 1600,
-    width: 2000,
-    handle: 'v7SJmanPThaNnkj0Xujt'
   }
 ]
