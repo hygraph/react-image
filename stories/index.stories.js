@@ -1,13 +1,13 @@
 import React from 'react'
 import { storiesOf } from '@storybook/react'
 
-import Image from '../src'
+import GraphImage from '../src'
 import vinylbaseImgs from './vinylbaseImgs'
 
 storiesOf('Image', module).add('sample', () => (
   <div>
     {vinylbaseImgs.map(image => (
-      <Image
+      <GraphImage
         key={image.handle}
         title="Sample"
         alt="Sample"

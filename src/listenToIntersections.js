@@ -1,40 +1,40 @@
-import inImageCache from './inImageCache'
+// import inImageCache from './inImageCache'
 
 const listeners = []
 
 let io
-function getIO(propsToCache) {
+function getIO() {
   if (
-    typeof io === `undefined` &&
-    typeof window !== `undefined` &&
+    typeof io === 'undefined' &&
+    typeof window !== 'undefined' &&
     window.IntersectionObserver
   ) {
     io = new window.IntersectionObserver(
       entries => {
         entries.forEach(entry => {
-          listeners.forEach(l => {
-            if (l[0] === entry.target) {
+          listeners.forEach(listener => {
+            if (listener[0] === entry.target) {
               // Edge doesn't currently support isIntersecting, so also test for an intersectionRatio > 0
               if (entry.isIntersecting || entry.intersectionRatio > 0) {
                 // when we intersect we cache the intersecting image for subsequent mounts
-                inImageCache(propsToCache)
-                io.unobserve(l[0])
-                l[1]()
+                console.log(entry)
+                io.unobserve(listener[0])
+                listener[1]()
               }
             }
           })
         })
       },
-      { rootMargin: `200px` }
+      { rootMargin: '200px' }
     )
   }
 
   return io
 }
 
-const listenToIntersections = (el, cb, props) => {
-  getIO(props).observe(el)
-  listeners.push([el, cb])
+const listenToIntersections = (element, callback) => {
+  getIO().observe(element)
+  listeners.push([element, callback])
 }
 
 export default listenToIntersections

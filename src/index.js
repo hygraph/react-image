@@ -15,7 +15,7 @@ const thumbImg = (handle, webp = '') =>
 const fullImg = (handle, transforms = '', webp = '') =>
   `${baseURI}${transforms}/${webp && 'output=format:webp/'}compress/${handle}`
 
-class Image extends React.Component {
+class GraphImage extends React.Component {
   constructor(props) {
     super(props)
 
@@ -31,7 +31,7 @@ class Image extends React.Component {
 
     if (
       !seenBefore &&
-      typeof window !== `undefined` &&
+      typeof window !== 'undefined' &&
       window.IntersectionObserver
     ) {
       isVisible = false
@@ -40,7 +40,7 @@ class Image extends React.Component {
     }
 
     // Never render image while server rendering
-    if (typeof window === `undefined`) {
+    if (typeof window === 'undefined') {
       isVisible = false
       imgLoaded = false
     }
@@ -56,13 +56,9 @@ class Image extends React.Component {
 
   handleRef(ref) {
     if (this.state.IOSupported && ref) {
-      listenToIntersections(
-        ref,
-        () => {
-          this.setState({ isVisible: true, imgLoaded: false })
-        },
-        this.props
-      )
+      listenToIntersections(ref, () => {
+        this.setState({ isVisible: true, imgLoaded: false })
+      })
     }
   }
 
@@ -81,19 +77,20 @@ class Image extends React.Component {
     } = this.props
 
     let bgColor
-    if (typeof backgroundColor === `boolean`) {
-      bgColor = `lightgray`
+    if (typeof backgroundColor === 'boolean') {
+      bgColor = 'lightgray'
     } else {
       bgColor = backgroundColor
     }
 
     if (handle) {
       let finalSrc = fullImg(transforms, handle)
-      let finalThumb = thumbImg(handle)
+      const finalThumb = thumbImg(handle)
       // Use webp by default if browser supports it
       if (isWebpSupported() && withWebp) {
         finalSrc = fullImg(handle, transforms, true)
-        finalThumb = thumbImg(handle, true)
+        // figure out the error on filestack transforms with blur + webp
+        // finalThumb = thumbImg(handle, true)
       }
 
       // The outer div is necessary to reset the z-index to 0.
@@ -162,6 +159,7 @@ class Image extends React.Component {
                 onLoad={() => {
                   this.state.IOSupported && this.setState({ imgLoaded: true })
                   this.props.onLoad && this.props.onLoad()
+                  inImageCache(this.props, true)
                 }}
               />
             )}
@@ -174,7 +172,7 @@ class Image extends React.Component {
   }
 }
 
-Image.defaultProps = {
+GraphImage.defaultProps = {
   blurryPlaceholder: true,
   withWebp: true,
   style: {},
@@ -184,11 +182,11 @@ Image.defaultProps = {
   title: '',
   outerWrapperClassName: '',
   className: '',
-  backgroundColor: null,
+  backgroundColor: '',
   onLoad() {}
 }
 
-Image.propTypes = {
+GraphImage.propTypes = {
   image: PropTypes.shape({
     handle: PropTypes.string,
     height: PropTypes.number,
@@ -210,4 +208,4 @@ Image.propTypes = {
   onLoad: PropTypes.func
 }
 
-export default Image
+export default GraphImage
