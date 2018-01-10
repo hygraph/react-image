@@ -12,7 +12,12 @@ storiesOf('Image', module).add('sample', () => (
         title="Sample"
         alt="Sample"
         image={image}
+        maxWidth={800}
         withWebp
+        style={{
+          maxWidth: 800,
+          margin: '32px auto'
+        }}
       />
     ))}
   </div>

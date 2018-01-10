@@ -25,9 +25,21 @@ const getSizes = (width, maxWidth) => {
     maxWidth * 3
   ]
   const filteredSizes = sizes.filter(size => size < width)
-  filteredSizes.push(width)
-  // console.log(filteredSizes)
+
+  // Add the original image to ensure the largest image possible
+  // is available for small images. Also so we can link to
+  // the original image.
+  const finalSizes = [...filteredSizes, width]
+  // console.log(finalSizes)
+  return finalSizes
 }
+
+const srcSet = (sizes, handle, webp) =>
+  sizes
+    .map(size => `${fullImg(handle, `resize=w:${size}`, webp)} ${size}w`)
+    .join(',\n')
+
+const imgSizes = maxWidth => `(max-width: ${maxWidth}px) 100vw, ${maxWidth}px`
 
 class GraphImage extends React.Component {
   constructor(props) {
@@ -39,8 +51,11 @@ class GraphImage extends React.Component {
     let imgLoaded = true
     let IOSupported = false
 
-    // We get the responsive sizes of an image
-    getSizes(props.image.width, props.maxWidth)
+    // We get the responsive sizes for the image
+    // const sizes = getSizes(props.image.width, props.maxWidth)
+
+    // console.log(srcSet(sizes, props.image, true))
+    // console.log(imgSizes(props.maxWidth))
 
     // If this image has already been loaded before then we can assume it's
     // in the browser cache so it's cheap to just show directly.
@@ -73,14 +88,19 @@ class GraphImage extends React.Component {
   }
 
   onImageLoaded() {
-    this.state.IOSupported &&
+    if (this.state.IOSupported) {
       this.setState(
         () => ({
           imgLoaded: true
         }),
-        () => inImageCache(this.props, true)
+        () => {
+          inImageCache(this.props, true)
+        }
       )
-    this.props.onLoad && this.props.onLoad()
+    }
+    if (this.props.onLoad) {
+      this.props.onLoad()
+    }
   }
 
   handleRef(ref) {
@@ -113,7 +133,7 @@ class GraphImage extends React.Component {
       bgColor = backgroundColor
     }
 
-    if (handle) {
+    if (handle && height && width) {
       let finalSrc = fullImg(transforms, handle)
       const finalThumb = thumbImg(handle)
       // Use webp by default if browser supports it
@@ -184,7 +204,11 @@ class GraphImage extends React.Component {
               <Img
                 alt={alt}
                 title={title}
+                srcSet={
+                  maxWidth && srcSet(getSizes(width, maxWidth), handle, true)
+                }
                 src={finalSrc}
+                sizes={maxWidth && imgSizes(maxWidth)}
                 opacity={this.state.imgLoaded || !this.props.fadeIn ? 1 : 0}
                 onLoad={this.onImageLoaded}
               />
@@ -201,7 +225,7 @@ class GraphImage extends React.Component {
 GraphImage.defaultProps = {
   blurryPlaceholder: true,
   withWebp: true,
-  maxWidth: 800,
+  maxWidth: null,
   style: {},
   transforms: '',
   fadeIn: true,
