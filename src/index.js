@@ -78,7 +78,7 @@ class GraphImage extends React.Component {
         () => ({
           imgLoaded: true
         }),
-        inImageCache(this.props, true)
+        () => inImageCache(this.props, true)
       )
     this.props.onLoad && this.props.onLoad()
   }
