@@ -15,6 +15,20 @@ const thumbImg = (handle, webp = '') =>
 const fullImg = (handle, transforms = '', webp = '') =>
   `${baseURI}${transforms}/${webp && 'output=format:webp/'}compress/${handle}`
 
+const getSizes = (width, maxWidth) => {
+  const sizes = [
+    maxWidth / 4,
+    maxWidth / 2,
+    maxWidth,
+    maxWidth * 1.5,
+    maxWidth * 2,
+    maxWidth * 3
+  ]
+  const filteredSizes = sizes.filter(size => size < width)
+  filteredSizes.push(width)
+  // console.log(filteredSizes)
+}
+
 class GraphImage extends React.Component {
   constructor(props) {
     super(props)
@@ -24,6 +38,9 @@ class GraphImage extends React.Component {
     let isVisible = true
     let imgLoaded = true
     let IOSupported = false
+
+    // We get the responsive sizes of an image
+    getSizes(props.image.width, props.maxWidth)
 
     // If this image has already been loaded before then we can assume it's
     // in the browser cache so it's cheap to just show directly.
@@ -52,6 +69,18 @@ class GraphImage extends React.Component {
     }
 
     this.handleRef = this.handleRef.bind(this)
+    this.onImageLoaded = this.onImageLoaded.bind(this)
+  }
+
+  onImageLoaded() {
+    this.state.IOSupported &&
+      this.setState(
+        () => ({
+          imgLoaded: true
+        }),
+        inImageCache(this.props, true)
+      )
+    this.props.onLoad && this.props.onLoad()
   }
 
   handleRef(ref) {
@@ -70,6 +99,7 @@ class GraphImage extends React.Component {
       outerWrapperClassName,
       style,
       image: { handle, height, width },
+      maxWidth,
       withWebp,
       transforms,
       blurryPlaceholder,
@@ -156,11 +186,7 @@ class GraphImage extends React.Component {
                 title={title}
                 src={finalSrc}
                 opacity={this.state.imgLoaded || !this.props.fadeIn ? 1 : 0}
-                onLoad={() => {
-                  this.state.IOSupported && this.setState({ imgLoaded: true })
-                  this.props.onLoad && this.props.onLoad()
-                  inImageCache(this.props, true)
-                }}
+                onLoad={this.onImageLoaded}
               />
             )}
           </div>
@@ -175,6 +201,7 @@ class GraphImage extends React.Component {
 GraphImage.defaultProps = {
   blurryPlaceholder: true,
   withWebp: true,
+  maxWidth: 800,
   style: {},
   transforms: '',
   fadeIn: true,
@@ -183,7 +210,7 @@ GraphImage.defaultProps = {
   outerWrapperClassName: '',
   className: '',
   backgroundColor: '',
-  onLoad() {}
+  onLoad: null
 }
 
 GraphImage.propTypes = {
@@ -192,6 +219,7 @@ GraphImage.propTypes = {
     height: PropTypes.number,
     width: PropTypes.number
   }).isRequired,
+  maxWidth: PropTypes.number,
   withWebp: PropTypes.bool,
   blurryPlaceholder: PropTypes.bool,
   transforms: PropTypes.string,

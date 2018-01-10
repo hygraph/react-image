@@ -25,7 +25,7 @@ const Img = props => {
 
 Img.defaultProps = {
   transitionDelay: '',
-  onLoad() {}
+  onLoad: null
 }
 
 Img.propTypes = {

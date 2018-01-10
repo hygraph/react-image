@@ -2,6 +2,7 @@
 // lazy-load & fade in on subsequent mounts.
 
 const imageCache = {}
+
 const inImageCache = ({ image: { handle } }, shouldCache) => {
   if (imageCache[handle]) {
     return true
