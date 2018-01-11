@@ -1,6 +1,6 @@
 {
   "name": "graphcms-image",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "main": "index.js",
   "license": "MIT",
   "author": "Hugo Meissner <hugomeissner@icloud.com>",
@@ -28,6 +28,7 @@
     "react-dom": "^16.2.0 || ^15.6.0"
   },
   "dependencies": {
+    "intersection-observer": "^0.5.0",
     "prop-types": "^15.6.0"
   }
 }

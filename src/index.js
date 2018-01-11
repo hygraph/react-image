@@ -1,3 +1,4 @@
+import 'intersection-observer'
 import React from 'react'
 import PropTypes from 'prop-types'
 import Img from './Img'
@@ -36,16 +37,12 @@ const isWebpSupported = () => {
   return isWebpSupportedCache
 }
 
-// check IntersectionObserver support and add it to the img
+// Add IntersectionObserver to component
 const listeners = []
 let io
 const getIO = () => {
-  if (
-    typeof io === 'undefined' &&
-    typeof window !== 'undefined' &&
-    window.IntersectionObserver
-  ) {
-    io = new window.IntersectionObserver(
+  if (typeof io === 'undefined' && typeof window !== 'undefined') {
+    io = new IntersectionObserver(
       entries => {
         entries.forEach(entry => {
           listeners.forEach(listener => {
@@ -53,7 +50,6 @@ const getIO = () => {
               // Edge doesn't currently support isIntersecting, so also test for an intersectionRatio > 0
               if (entry.isIntersecting || entry.intersectionRatio > 0) {
                 // when we intersect we cache the intersecting image for subsequent mounts
-                console.log(entry)
                 io.unobserve(listener[0])
                 listener[1]()
               }
@@ -107,7 +103,7 @@ function getWidths(width, maxWidth) {
   const finalSizes = [...filteredSizes, width]
   return finalSizes
 }
-// TODO: split into smaller functions?
+
 const srcSet = (srcBase, srcWidths, height, transforms) =>
   srcWidths
     .map(width => {
@@ -277,7 +273,7 @@ class GraphImage extends React.Component {
               />
             )}
 
-            {/* Once the image is visible (or the browser doesn't support IntersectionObserver), start downloading the image */}
+            {/* Once the image is visible, start downloading the image */}
             {this.state.isVisible && (
               <Img
                 alt={alt}
