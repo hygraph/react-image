@@ -1,21 +1,98 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-
 import Img from './Img'
-import listenToIntersections from './listenToIntersections'
-import isWebpSupported from './isWebpSupported'
-import inImageCache from './inImageCache'
 
-const baseURI = 'https://media.graphcms.com/'
-const thumbTrans = 'resize=w:20,h:20,fit:crop/blur=amount:2'
+const baseURI = 'https://media.graphcms.com'
 
-const thumbImg = (handle, webp = '') =>
-  `${baseURI}${thumbTrans}/${webp && 'output=format:webp/'}compress/${handle}`
+// Cache if we've intersected an image before so we don't
+// lazy-load & fade in on subsequent mounts.
+const imageCache = {}
+const inImageCache = ({ image: { handle } }, shouldCache) => {
+  if (imageCache[handle]) {
+    return true
+  }
+  if (shouldCache) {
+    imageCache[handle] = true
+  }
+  return false
+}
 
-const fullImg = (handle, transforms = '', webp = '') =>
-  `${baseURI}${transforms}/${webp && 'output=format:webp/'}compress/${handle}`
+// check webp support
+let isWebpSupportedCache = null
+const isWebpSupported = () => {
+  if (isWebpSupportedCache !== null) {
+    return isWebpSupportedCache
+  }
 
-const getSizes = (width, maxWidth) => {
+  const elem =
+    typeof window !== `undefined` ? window.document.createElement(`canvas`) : {}
+  if (elem.getContext && elem.getContext(`2d`)) {
+    isWebpSupportedCache =
+      elem.toDataURL(`image/webp`).indexOf(`data:image/webp`) === 0
+  } else {
+    isWebpSupportedCache = false
+  }
+
+  return isWebpSupportedCache
+}
+
+// check IntersectionObserver support and add it to the img
+const listeners = []
+let io
+const getIO = () => {
+  if (
+    typeof io === 'undefined' &&
+    typeof window !== 'undefined' &&
+    window.IntersectionObserver
+  ) {
+    io = new window.IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          listeners.forEach(listener => {
+            if (listener[0] === entry.target) {
+              // Edge doesn't currently support isIntersecting, so also test for an intersectionRatio > 0
+              if (entry.isIntersecting || entry.intersectionRatio > 0) {
+                // when we intersect we cache the intersecting image for subsequent mounts
+                console.log(entry)
+                io.unobserve(listener[0])
+                listener[1]()
+              }
+            }
+          })
+        })
+      },
+      { rootMargin: '200px' }
+    )
+  }
+
+  return io
+}
+const listenToIntersections = (element, callback) => {
+  getIO().observe(element)
+  listeners.push([element, callback])
+}
+
+const bgColor = backgroundColor =>
+  typeof backgroundColor === 'boolean' ? 'lightgray' : backgroundColor
+
+// We always keep the resize transform to have matching sizes + aspect ratio
+// If used with native height & width from GraphCMS it produces no transform
+const resizeImage = ({ width, height, fit }) =>
+  `resize=w:${width},h:${height},fit:${fit}`
+
+const compressAndWebp = webp => `${webp ? 'output=format:webp/' : ''}compress`
+
+const constructURL = (handle, withWebp) => resize => transforms =>
+  [
+    baseURI,
+    resize,
+    ...transforms,
+    compressAndWebp(isWebpSupported() && withWebp),
+    handle
+  ].join('/')
+
+// get and construct srcSet for the image
+function getWidths(width, maxWidth) {
   const sizes = [
     maxWidth / 4,
     maxWidth / 2,
@@ -25,18 +102,18 @@ const getSizes = (width, maxWidth) => {
     maxWidth * 3
   ]
   const filteredSizes = sizes.filter(size => size < width)
-
   // Add the original image to ensure the largest image possible
-  // is available for small images. Also so we can link to
-  // the original image.
+  // is available for small images.
   const finalSizes = [...filteredSizes, width]
-  // console.log(finalSizes)
   return finalSizes
 }
-
-const srcSet = (sizes, handle, webp) =>
-  sizes
-    .map(size => `${fullImg(handle, `resize=w:${size}`, webp)} ${size}w`)
+// TODO: split into smaller functions?
+const srcSet = (srcBase, srcWidths, height, transforms) =>
+  srcWidths
+    .map(width => {
+      const setSize = { width, height, fit: 'crop' }
+      return `${srcBase([resizeImage(setSize)])(transforms)} ${width}w`
+    })
     .join(',\n')
 
 const imgSizes = maxWidth => `(max-width: ${maxWidth}px) 100vw, ${maxWidth}px`
@@ -45,20 +122,10 @@ class GraphImage extends React.Component {
   constructor(props) {
     super(props)
 
-    // If this browser doesn't support the IntersectionObserver API
-    // we default to start downloading the image right away.
     let isVisible = true
     let imgLoaded = true
     let IOSupported = false
 
-    // We get the responsive sizes for the image
-    // const sizes = getSizes(props.image.width, props.maxWidth)
-
-    // console.log(srcSet(sizes, props.image, true))
-    // console.log(imgSizes(props.maxWidth))
-
-    // If this image has already been loaded before then we can assume it's
-    // in the browser cache so it's cheap to just show directly.
     const seenBefore = inImageCache(props)
 
     if (
@@ -118,29 +185,40 @@ class GraphImage extends React.Component {
       className,
       outerWrapperClassName,
       style,
-      image: { handle, height, width },
+      image: { width, height, handle },
+      fit,
       maxWidth,
       withWebp,
       transforms,
       blurryPlaceholder,
-      backgroundColor
+      backgroundColor,
+      fadeIn
     } = this.props
 
-    let bgColor
-    if (typeof backgroundColor === 'boolean') {
-      bgColor = 'lightgray'
-    } else {
-      bgColor = backgroundColor
-    }
+    if (width && height && handle) {
+      // unify after webp + blur resolved
+      const srcBase = constructURL(handle, withWebp)
+      const thumbBase = constructURL(handle, false)
 
-    if (handle && height && width) {
-      let finalSrc = fullImg(transforms, handle)
-      const finalThumb = thumbImg(handle)
-      // Use webp by default if browser supports it
-      if (isWebpSupported() && withWebp) {
-        finalSrc = fullImg(handle, transforms, true)
-        // figure out the error on filestack transforms with blur + webp
-        // finalThumb = thumbImg(handle, true)
+      // construct the final image url
+      const sizedSrc = srcBase(resizeImage({ width, height, fit }))
+      const finalSrc = sizedSrc(transforms)
+
+      // construct blurry placeholder url
+      const thumbSize = { width: 20, height: 20, fit: 'crop' }
+      const thumbSrc = thumbBase(resizeImage(thumbSize))(['blur=amount:2'])
+
+      // construct srcSet if maxWidth provided
+      let srcSetImgs
+      let sizes
+      if (maxWidth) {
+        srcSetImgs = srcSet(
+          srcBase,
+          getWidths(width, maxWidth),
+          height,
+          transforms
+        )
+        sizes = imgSizes(maxWidth)
       }
 
       // The outer div is necessary to reset the z-index to 0.
@@ -176,18 +254,18 @@ class GraphImage extends React.Component {
               <Img
                 alt={alt}
                 title={title}
-                src={finalThumb}
+                src={thumbSrc}
                 opacity={this.state.imgLoaded ? 0 : 1}
                 transitionDelay="0.25s"
               />
             )}
 
             {/* Show a solid background color. */}
-            {bgColor && (
+            {backgroundColor && (
               <div
                 title={title}
                 style={{
-                  backgroundColor: bgColor,
+                  backgroundColor: bgColor(backgroundColor),
                   position: 'absolute',
                   top: 0,
                   bottom: 0,
@@ -204,12 +282,10 @@ class GraphImage extends React.Component {
               <Img
                 alt={alt}
                 title={title}
-                srcSet={
-                  maxWidth && srcSet(getSizes(width, maxWidth), handle, true)
-                }
+                srcSet={srcSetImgs}
                 src={finalSrc}
-                sizes={maxWidth && imgSizes(maxWidth)}
-                opacity={this.state.imgLoaded || !this.props.fadeIn ? 1 : 0}
+                sizes={sizes}
+                opacity={this.state.imgLoaded || !fadeIn ? 1 : 0}
                 onLoad={this.onImageLoaded}
               />
             )}
@@ -223,41 +299,44 @@ class GraphImage extends React.Component {
 }
 
 GraphImage.defaultProps = {
-  blurryPlaceholder: true,
-  withWebp: true,
-  maxWidth: null,
-  style: {},
-  transforms: '',
-  fadeIn: true,
-  alt: '',
   title: '',
-  outerWrapperClassName: '',
+  alt: '',
   className: '',
+  outerWrapperClassName: '',
+  style: {},
+  fit: 'crop',
+  maxWidth: 0,
+  withWebp: true,
+  transforms: [],
+  blurryPlaceholder: true,
   backgroundColor: '',
+  fadeIn: true,
   onLoad: null
 }
 
 GraphImage.propTypes = {
-  image: PropTypes.shape({
-    handle: PropTypes.string,
-    height: PropTypes.number,
-    width: PropTypes.number
-  }).isRequired,
-  maxWidth: PropTypes.number,
-  withWebp: PropTypes.bool,
-  blurryPlaceholder: PropTypes.bool,
-  transforms: PropTypes.string,
-  fadeIn: PropTypes.bool,
   title: PropTypes.string,
   alt: PropTypes.string,
-  className: PropTypes.oneOfType([PropTypes.string, PropTypes.object]), // Support Glamor's css prop.
+  // Support Glamor's css prop for classname
+  className: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   outerWrapperClassName: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.object
   ]),
   style: PropTypes.object,
+  image: PropTypes.shape({
+    handle: PropTypes.string,
+    height: PropTypes.number,
+    width: PropTypes.number
+  }).isRequired,
+  fit: PropTypes.oneOf(['clip', 'crop', 'scale', 'max']),
+  maxWidth: PropTypes.number,
+  withWebp: PropTypes.bool,
+  transforms: PropTypes.arrayOf(PropTypes.string),
+  onLoad: PropTypes.func,
+  blurryPlaceholder: PropTypes.bool,
   backgroundColor: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
-  onLoad: PropTypes.func
+  fadeIn: PropTypes.bool
 }
 
 export default GraphImage
