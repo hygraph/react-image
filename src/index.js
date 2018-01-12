@@ -8,7 +8,7 @@ const baseURI = 'https://media.graphcms.com'
 // Cache if we've intersected an image before so we don't
 // lazy-load & fade in on subsequent mounts.
 const imageCache = {}
-const inImageCache = ({ image: { handle } }, shouldCache) => {
+const inImageCache = ({ handle }, shouldCache) => {
   if (imageCache[handle]) {
     return true
   }
@@ -30,11 +30,9 @@ const isWebpSupported = () => {
   if (elem.getContext && elem.getContext(`2d`)) {
     isWebpSupportedCache =
       elem.toDataURL(`image/webp`).indexOf(`data:image/webp`) === 0
-  } else {
-    isWebpSupportedCache = false
+    return isWebpSupportedCache
   }
-
-  return isWebpSupportedCache
+  return false
 }
 
 // Add IntersectionObserver to component
@@ -87,29 +85,30 @@ const constructURL = (handle, withWebp) => resize => transforms =>
     handle
   ].join('/')
 
-// get and construct srcSet for the image
-function getWidths(width, maxWidth) {
-  const sizes = [
-    maxWidth / 4,
-    maxWidth / 2,
-    maxWidth,
-    maxWidth * 1.5,
-    maxWidth * 2,
-    maxWidth * 3
-  ]
-  const filteredSizes = sizes.filter(size => size < width)
-  // Add the original image to ensure the largest image possible
+// responsiveness transforms
+const responsiveSizes = size => [
+  size / 4,
+  size / 2,
+  size,
+  size * 1.5,
+  size * 2,
+  size * 3
+]
+
+const getWidths = (width, maxWidth) => {
+  const sizes = responsiveSizes(maxWidth).filter(size => size < width)
+  // Add the original width to ensure the largest image possible
   // is available for small images.
-  const finalSizes = [...filteredSizes, width]
+  const finalSizes = [...sizes, width]
   return finalSizes
 }
 
-const srcSet = (srcBase, srcWidths, height, transforms) =>
+const srcSet = (srcBase, srcWidths, transforms) =>
   srcWidths
-    .map(width => {
-      const setSize = { width, height, fit: 'crop' }
-      return `${srcBase([resizeImage(setSize)])(transforms)} ${width}w`
-    })
+    .map(
+      width =>
+        `${srcBase([`resize=w:${width},fit:crop`])(transforms)} ${width}w`
+    )
     .join(',\n')
 
 const imgSizes = maxWidth => `(max-width: ${maxWidth}px) 100vw, ${maxWidth}px`
@@ -157,7 +156,7 @@ class GraphImage extends React.Component {
           imgLoaded: true
         }),
         () => {
-          inImageCache(this.props, true)
+          inImageCache(this.props.image, true)
         }
       )
     }
@@ -205,17 +204,8 @@ class GraphImage extends React.Component {
       const thumbSrc = thumbBase(resizeImage(thumbSize))(['blur=amount:2'])
 
       // construct srcSet if maxWidth provided
-      let srcSetImgs
-      let sizes
-      if (maxWidth) {
-        srcSetImgs = srcSet(
-          srcBase,
-          getWidths(width, maxWidth),
-          height,
-          transforms
-        )
-        sizes = imgSizes(maxWidth)
-      }
+      const srcSetImgs = srcSet(srcBase, getWidths(width, maxWidth), transforms)
+      const sizes = imgSizes(maxWidth)
 
       // The outer div is necessary to reset the z-index to 0.
       return (
@@ -301,7 +291,7 @@ GraphImage.defaultProps = {
   outerWrapperClassName: '',
   style: {},
   fit: 'crop',
-  maxWidth: 0,
+  maxWidth: 800,
   withWebp: true,
   transforms: [],
   blurryPlaceholder: true,

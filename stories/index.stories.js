@@ -5,18 +5,29 @@ import GraphImage from '../src'
 import vinylbaseImgs from './vinylbaseImgs'
 
 storiesOf('Image', module).add('sample', () => (
-  <div>
+  <div
+    style={{
+      display: 'flex',
+      flexWrap: 'wrap',
+      maxWidth: 1064,
+      margin: '0 auto'
+    }}
+  >
     {vinylbaseImgs.map(image => (
       <GraphImage
         key={image.handle}
         title="Sample"
         alt="Sample"
-        image={image}
-        maxWidth={800}
+        image={{
+          handle: image.handle,
+          width: 1920,
+          height: 1080
+        }}
+        maxWidth={500}
         withWebp
         style={{
-          maxWidth: 800,
-          margin: '32px auto'
+          width: 500,
+          margin: '32px 16px'
         }}
       />
     ))}
