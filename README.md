@@ -1,4 +1,6 @@
-<img src="./Logo.svg" alt="GraphCMS-image Logo" style="display: block; margin: 0 auto;" />
+<p align="center">
+  <img src="https://graphcms.com/assets/svg/graphcms-image.svg">
+</p>
 
 # graphcms-image
 
@@ -21,7 +23,7 @@ This is what a component using `graphcms-image` looks like.
 import React from "react";
 import GraphImg from "graphcms-image";
 
-export default (image) => (
+export default ({ data: { image } }) => (
   <div>
     <h1>Hello graphcms-image</h1>
     <GraphIMG image={image} maxWidth={800} />
