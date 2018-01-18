@@ -6,7 +6,7 @@
 
 Inpired by and based on [gatsby-image](https://github.com/gatsbyjs/gatsby/tree/master/packages/gatsby-image)
 
-**[Demo](demolink)**
+**[Demo](https://graphcms-image.netlify.com/?down=0)**
 
 * Resize large images to the size needed by your design
 * Generate multiple smaller images to make sure devices download the optimal-sized one.
