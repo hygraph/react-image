@@ -1,3 +1,5 @@
+<img src="./Logo.svg" alt="GraphCMS-image Logo" style="display: block; margin: 0 auto;" />
+
 # graphcms-image
 
 Inpired by and based on [gatsby-image](https://github.com/gatsbyjs/gatsby/tree/master/packages/gatsby-image)
