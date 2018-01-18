@@ -20,14 +20,22 @@ Inpired by and based on [gatsby-image](https://github.com/gatsbyjs/gatsby/tree/m
 This is what a component using `graphcms-image` looks like.
 
 ```jsx
-import React from "react";
+import React, { Fragment } from "react";
 import GraphImg from "graphcms-image";
 
-export default ({ data: { image } }) => (
-  <div>
-    <h1>Hello graphcms-image</h1>
-    <GraphIMG image={image} maxWidth={800} />
-  </div>
+export default ({ data: { allAssets } }) => (
+  <Fragment>
+    {allAssets.map(image => (
+      <GraphImg
+        image={{
+          handle: image.handle,
+          width: image.width,
+          height: image.height
+        }}
+        maxWidth={800} 
+      />
+    ))}
+  </Fragment>
 );
 
 export const query = graphql`
