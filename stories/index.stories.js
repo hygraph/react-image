@@ -4,7 +4,7 @@ import { storiesOf } from '@storybook/react'
 import GraphImage from '../src'
 import vinylbaseImgs from './vinylbaseImgs'
 
-storiesOf('Image', module).add('sample', () => (
+storiesOf('Image', module).add('image', () => (
   <div
     style={{
       display: 'flex',
@@ -34,4 +34,10 @@ storiesOf('Image', module).add('sample', () => (
   </div>
 ))
 
-storiesOf('Foo', module).add('bar', () => <h1>Foobar</h1>)
+storiesOf('Cache', module).add('cache', () => (
+  <h2>
+    This story exist only for the purpose of showing you that going back and
+    forth between it and the Image will not trigger reloading images with blur
+    up if they have already been seen in the viewport
+  </h2>
+))
