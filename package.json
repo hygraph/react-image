@@ -24,8 +24,8 @@
     "react-dom": "^16.2.0"
   },
   "peerDependencies": {
-    "react": "^16.2.0 || ^15.6.0",
-    "react-dom": "^16.2.0 || ^15.6.0"
+    "react": "^16.x.x || ^15.6.0",
+    "react-dom": "^16.x.x || ^15.6.0"
   },
   "dependencies": {
     "intersection-observer": "^0.5.0",
