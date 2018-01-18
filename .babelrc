@@ -1,4 +1,3 @@
 {
-  "presets": ["airbnb"],
-  "plugins": ["transform-react-remove-prop-types"]
+  "presets": ["airbnb"]
 }

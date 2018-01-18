@@ -1,6 +1,6 @@
 {
   "name": "graphcms-image",
-  "version": "1.0.6",
+  "version": "1.0.71",
   "main": "index.js",
   "license": "MIT",
   "author": "Hugo Meissner <hugomeissner@icloud.com>",
@@ -16,7 +16,6 @@
     "@storybook/react": "^3.3.6",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
-    "babel-plugin-transform-react-remove-prop-types": "^0.4.12",
     "babel-preset-airbnb": "^2.4.0",
     "eslint": "^4.14.0",
     "eslint-config-blazity": "^1.0.4",
