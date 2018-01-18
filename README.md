@@ -1,4 +1,6 @@
-<img src="./Logo.svg" alt="GraphCMS-image Logo" style="display: block; margin: 0 auto;" />
+<p align="center">
+  <img src="https://graphcms.com/assets/svg/graphcms-image.svg">
+</p>
 
 # graphcms-image
 
