@@ -23,24 +23,22 @@ This is what a component using `graphcms-image` looks like.
 import React, { Fragment } from "react";
 import GraphImg from "graphcms-image";
 
-export default ({ data: { allAssets } }) => (
-  <Fragment>
-    {allAssets.map(image => (
-      <GraphImg
-        image={{
-          handle: image.handle,
-          width: image.width,
-          height: image.height
-        }}
-        maxWidth={800} 
-      />
-    ))}
-  </Fragment>
-);
+export default ({ data: { loading, images } }) => {
+  if (!loading) {
+    return (
+      <Fragment>
+        {images.map(image => (
+          <GraphImg image={image} maxWidth={800} />
+        ))}
+      </Fragment>
+    )
+  }
+  return <h1>Loading...</h1>
+};
 
 export const query = graphql`
   query getAssets {
-    allAssets {
+    images: allAssets {
       handle
       width
       height
