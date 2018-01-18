@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://graphcms.com/assets/svg/graphcms-image.svg?sanitize=true">
+  <img width="300" src="https://graphcms.com/assets/svg/graphcms-image.svg?sanitize=true">
 </p>
 
 # graphcms-image
