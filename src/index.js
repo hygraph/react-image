@@ -1,7 +1,10 @@
-import 'intersection-observer'
 import React from 'react'
 import PropTypes from 'prop-types'
 import Img from './Img'
+
+if (typeof window !== 'undefined') {
+  require('intersection-observer')
+}
 
 const baseURI = 'https://media.graphcms.com'
 
