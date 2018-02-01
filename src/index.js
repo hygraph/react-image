@@ -108,7 +108,7 @@ const srcSet = (srcBase, srcWidths, transforms) =>
   srcWidths
     .map(
       width =>
-        `${srcBase([`resize=w:${width},fit:crop`])(transforms)} ${width}w`
+        `${srcBase([`resize=w:${Math.floor(width)},fit:crop`])(transforms)} ${Math.floor(width)}w`
     )
     .join(',\n')
 
