@@ -6,8 +6,6 @@ if (typeof window !== 'undefined') {
   require('intersection-observer')
 }
 
-const baseURI = 'https://media.graphcms.com'
-
 // Cache if we've intersected an image before so we don't
 // lazy-load & fade in on subsequent mounts.
 const imageCache = {}
@@ -79,7 +77,7 @@ const resizeImage = ({ width, height, fit }) =>
 
 const compressAndWebp = webp => `${webp ? 'output=format:webp/' : ''}compress`
 
-const constructURL = (handle, withWebp) => resize => transforms =>
+const constructURL = (handle, withWebp, baseURI) => resize => transforms =>
   [
     baseURI,
     resize,
@@ -190,13 +188,14 @@ class GraphImage extends React.Component {
       transforms,
       blurryPlaceholder,
       backgroundColor,
-      fadeIn
+      fadeIn,
+      baseURI
     } = this.props
 
     if (width && height && handle) {
       // unify after webp + blur resolved
-      const srcBase = constructURL(handle, withWebp)
-      const thumbBase = constructURL(handle, false)
+      const srcBase = constructURL(handle, withWebp, baseURI)
+      const thumbBase = constructURL(handle, false, baseURI)
 
       // construct the final image url
       const sizedSrc = srcBase(resizeImage({ width, height, fit }))
@@ -288,20 +287,21 @@ class GraphImage extends React.Component {
 }
 
 GraphImage.defaultProps = {
-  title: '',
-  alt: '',
-  className: '',
-  outerWrapperClassName: '',
+  title: "",
+  alt: "",
+  className: "",
+  outerWrapperClassName: "",
   style: {},
-  fit: 'crop',
+  fit: "crop",
   maxWidth: 800,
   withWebp: true,
   transforms: [],
   blurryPlaceholder: true,
-  backgroundColor: '',
+  backgroundColor: "",
   fadeIn: true,
-  onLoad: null
-}
+  onLoad: null,
+  baseURI: 'https://media.graphcms.com'
+};
 
 GraphImage.propTypes = {
   title: PropTypes.string,
@@ -325,7 +325,8 @@ GraphImage.propTypes = {
   onLoad: PropTypes.func,
   blurryPlaceholder: PropTypes.bool,
   backgroundColor: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
-  fadeIn: PropTypes.bool
+  fadeIn: PropTypes.bool,
+  baseURI: PropTypes.string
 }
 
 export default GraphImage
