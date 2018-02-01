@@ -287,21 +287,21 @@ class GraphImage extends React.Component {
 }
 
 GraphImage.defaultProps = {
-  title: "",
-  alt: "",
-  className: "",
-  outerWrapperClassName: "",
+  title: '',
+  alt: '',
+  className: '',
+  outerWrapperClassName: '',
   style: {},
-  fit: "crop",
+  fit: 'crop',
   maxWidth: 800,
   withWebp: true,
   transforms: [],
   blurryPlaceholder: true,
-  backgroundColor: "",
+  backgroundColor: '',
   fadeIn: true,
   onLoad: null,
   baseURI: 'https://media.graphcms.com'
-};
+}
 
 GraphImage.propTypes = {
   title: PropTypes.string,
