@@ -104,11 +104,13 @@ const getWidths = (width, maxWidth) => {
   return finalSizes
 }
 
-const srcSet = (srcBase, srcWidths, transforms) =>
+const srcSet = (srcBase, srcWidths, fit, transforms) =>
   srcWidths
     .map(
       width =>
-        `${srcBase([`resize=w:${Math.floor(width)},fit:crop`])(transforms)} ${Math.floor(width)}w`
+        `${srcBase([`resize=w:${Math.floor(width)},fit:${fit}`])(
+          transforms
+        )} ${Math.floor(width)}w`
     )
     .join(',\n')
 
@@ -206,7 +208,12 @@ class GraphImage extends React.Component {
       const thumbSrc = thumbBase(resizeImage(thumbSize))(['blur=amount:2'])
 
       // construct srcSet if maxWidth provided
-      const srcSetImgs = srcSet(srcBase, getWidths(width, maxWidth), transforms)
+      const srcSetImgs = srcSet(
+        srcBase,
+        getWidths(width, maxWidth),
+        fit,
+        transforms
+      )
       const sizes = imgSizes(maxWidth)
 
       // The outer div is necessary to reset the z-index to 0.
