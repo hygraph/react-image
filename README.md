@@ -4,7 +4,7 @@
 
 # graphcms-image
 
-Inpired by and based on [gatsby-image](https://github.com/gatsbyjs/gatsby/tree/master/packages/gatsby-image)
+Inspired by and based on [gatsby-image](https://github.com/gatsbyjs/gatsby/tree/master/packages/gatsby-image)
 
 **[Demo](https://graphcms-image.netlify.com/?down=0)**
 
