@@ -1,6 +1,6 @@
 {
-  "name": "@graphcms/react-image",
-  "version": "0.0.0-semantically-released",
+  "name": "@burrow/graphcms-image",
+  "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
   "author": "GraphCMS",
@@ -8,7 +8,7 @@
     "Hugo Meissner <hugomeissner@icloud.com>"
   ],
   "scripts": {
-    "build": "babel src --out-dir .",
+    "build": "babel src --out-dir build/",
     "prepare": "npm run build",
     "test": "node_modules/.bin/jest --verbose --coverage"
   },
