@@ -1,12 +1,20 @@
 import { expect } from 'chai';
-import { srcSet, getWidths } from '../src/Utils';
+import { srcSet, getWidths, constructURL } from '../src/Utils';
 
 describe('Utils tests', () => {
   const timeout = 3000;
 
   test('should get the correct widths', async () => {
-    const widths = new getWidths(200, 4880);
-    console.log(widths)
+    const widths = new getWidths(2440, 4880);
+    expect(widths.length).to.equal(2);
+    expect(widths[0]).to.equal(1220);
+  }, timeout);
+
+  test('should construct correct srcSet', async () => {
+    const constructedURL = constructURL('test', false, 'https://burrow.com');
+    const widths = new getWidths(2440, 4880);
+    const srcSetImgs = new srcSet(constructedURL, widths, '', '');
+    console.log(srcSetImgs);
   }, timeout);
 
 });
