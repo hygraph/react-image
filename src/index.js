@@ -1,6 +1,7 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import Img from './Img'
+import React from 'react';
+import PropTypes from 'prop-types';
+import Img from './Img';
+import { srcSet, getWidths, constructURL, imgSizes } from './Utils';
 
 if (typeof window !== 'undefined') {
   require('intersection-observer')
@@ -8,7 +9,7 @@ if (typeof window !== 'undefined') {
 
 // Cache if we've intersected an image before so we don't
 // lazy-load & fade in on subsequent mounts.
-const imageCache = {}
+const imageCache = {};
 const inImageCache = ({ handle }, shouldCache) => {
   if (imageCache[handle]) {
     return true
@@ -17,28 +18,11 @@ const inImageCache = ({ handle }, shouldCache) => {
     imageCache[handle] = true
   }
   return false
-}
-
-// check webp support
-let isWebpSupportedCache = null
-const isWebpSupported = () => {
-  if (isWebpSupportedCache !== null) {
-    return isWebpSupportedCache
-  }
-
-  const elem =
-    typeof window !== `undefined` ? window.document.createElement(`canvas`) : {}
-  if (elem.getContext && elem.getContext(`2d`)) {
-    isWebpSupportedCache =
-      elem.toDataURL(`image/webp`).indexOf(`data:image/webp`) === 0
-    return isWebpSupportedCache
-  }
-  return false
-}
+};
 
 // Add IntersectionObserver to component
-const listeners = []
-let io
+const listeners = [];
+let io;
 const getIO = () => {
   if (typeof io === 'undefined' && typeof window !== 'undefined') {
     io = new IntersectionObserver(
@@ -59,13 +43,13 @@ const getIO = () => {
       { rootMargin: '200px' }
     )
   }
-
   return io
-}
+};
+
 const listenToIntersections = (element, callback) => {
-  getIO().observe(element)
+  getIO().observe(element);
   listeners.push([element, callback])
-}
+};
 
 const bgColor = backgroundColor =>
   typeof backgroundColor === 'boolean' ? 'lightgray' : backgroundColor
@@ -73,82 +57,41 @@ const bgColor = backgroundColor =>
 // We always keep the resize transform to have matching sizes + aspect ratio
 // If used with native height & width from GraphCMS it produces no transform
 const resizeImage = ({ width, height, fit }) =>
-  `resize=w:${width},h:${height},fit:${fit}`
-
-const compressAndWebp = webp => `${webp ? 'output=format:webp/' : ''}compress`
-
-const constructURL = (handle, withWebp, baseURI) => resize => transforms =>
-  [
-    baseURI,
-    resize,
-    ...transforms,
-    compressAndWebp(isWebpSupported() && withWebp),
-    handle
-  ].join('/')
-
-// responsiveness transforms
-const responsiveSizes = size => [
-  size / 4,
-  size / 2,
-  size,
-  size * 1.5,
-  size * 2,
-  size * 3
-]
-
-const getWidths = (width, maxWidth) => {
-  const sizes = responsiveSizes(maxWidth).filter(size => size < width)
-  // Add the original width to ensure the largest image possible
-  // is available for small images.
-  const finalSizes = [...sizes, width]
-  return finalSizes
-}
-
-const srcSet = (srcBase, srcWidths, fit, transforms) =>
-  srcWidths
-    .map(
-      width =>
-        `${srcBase([`resize=w:${Math.floor(width)},fit:${fit}`])(
-          transforms
-        )} ${Math.floor(width)}w`
-    )
-    .join(',\n')
-
-const imgSizes = maxWidth => `(max-width: ${maxWidth}px) 100vw, ${maxWidth}px`
+  `resize=w:${width},h:${height},fit:${fit}`;
 
 class GraphImage extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
 
-    let isVisible = true
-    let imgLoaded = true
-    let IOSupported = false
+    let isVisible = true;
+    let imgLoaded = true;
+    let IOSupported = false;
 
-    const seenBefore = inImageCache(props)
+    const seenBefore = inImageCache(props);
 
     if (
       !seenBefore &&
       typeof window !== 'undefined' &&
       window.IntersectionObserver
     ) {
-      isVisible = false
-      imgLoaded = false
-      IOSupported = true
+      isVisible = false;
+      imgLoaded = false;
+      IOSupported = true;
     }
 
     // Never render image while server rendering
     if (typeof window === 'undefined') {
-      isVisible = false
-      imgLoaded = false
+      isVisible = false;
+      imgLoaded = false;
     }
 
     this.state = {
       isVisible,
       imgLoaded,
       IOSupported
-    }
+    };
 
-    this.handleRef = this.handleRef.bind(this)
+    this.handleRef = this.handleRef.bind(this);
     this.onImageLoaded = this.onImageLoaded.bind(this)
   }
 
@@ -185,27 +128,36 @@ class GraphImage extends React.Component {
       style,
       image: { width, height, handle },
       fit,
-      maxWidth,
       withWebp,
       transforms,
       blurryPlaceholder,
       backgroundColor,
       fadeIn,
       baseURI
-    } = this.props
+    } = this.props;
+
+    let {
+      maxWidth,
+    } = this.props;
 
     if (width && height && handle) {
       // unify after webp + blur resolved
-      const srcBase = constructURL(handle, withWebp, baseURI)
-      const thumbBase = constructURL(handle, false, baseURI)
+      const srcBase = constructURL(handle, withWebp, baseURI);
+      const thumbBase = constructURL(handle, false, baseURI);
 
       // construct the final image url
-      const sizedSrc = srcBase(resizeImage({ width, height, fit }))
-      const finalSrc = sizedSrc(transforms)
+      const sizedSrc = srcBase(resizeImage({ width, height, fit }));
+      const finalSrc = sizedSrc(transforms);
 
       // construct blurry placeholder url
-      const thumbSize = { width: 20, height: 20, fit: 'crop' }
-      const thumbSrc = thumbBase(resizeImage(thumbSize))(['blur=amount:2'])
+      const thumbSize = { width: 20, height: 20, fit: 'crop' };
+      const thumbSrc = thumbBase(resizeImage(thumbSize))(['blur=amount:2']);
+
+      // If our width is larger than maxWidth (if default maxWidth is used and
+      // component does not have one) then we switch to a maxWidth that is the current-width.
+      if (width > maxWidth) {
+        maxWidth = width;
+      }
 
       // construct srcSet if maxWidth provided
       const srcSetImgs = srcSet(
@@ -213,8 +165,8 @@ class GraphImage extends React.Component {
         getWidths(width, maxWidth),
         fit,
         transforms
-      )
-      const sizes = imgSizes(maxWidth)
+      );
+      const sizes = imgSizes(maxWidth);
 
       // The outer div is necessary to reset the z-index to 0.
       return (
@@ -308,7 +260,7 @@ GraphImage.defaultProps = {
   fadeIn: true,
   onLoad: null,
   baseURI: 'https://media.graphcms.com'
-}
+};
 
 GraphImage.propTypes = {
   title: PropTypes.string,
@@ -334,6 +286,6 @@ GraphImage.propTypes = {
   backgroundColor: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   fadeIn: PropTypes.bool,
   baseURI: PropTypes.string
-}
+};
 
 export default GraphImage
