@@ -27,6 +27,8 @@ const isWebpSupported = () => {
 
 const compressAndWebp = webp => `${webp ? 'output=format:webp/' : ''}compress`;
 
+const imgSizes = maxWidth => `(max-width: ${maxWidth}px) 100vw, ${maxWidth}px`;
+
 const constructURL = (handle, withWebp, baseURI) => resize => transforms =>
   [
     baseURI,
@@ -57,4 +59,5 @@ export {
   srcSet,
   getWidths,
   constructURL,
+  imgSizes,
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Img from './Img';
-import { srcSet, getWidths, constructURL } from './Utils';
+import { srcSet, getWidths, constructURL, imgSizes } from './Utils';
 
 if (typeof window !== 'undefined') {
   require('intersection-observer')
@@ -58,8 +58,6 @@ const bgColor = backgroundColor =>
 // If used with native height & width from GraphCMS it produces no transform
 const resizeImage = ({ width, height, fit }) =>
   `resize=w:${width},h:${height},fit:${fit}`;
-
-const imgSizes = maxWidth => `(max-width: ${maxWidth}px) 100vw, ${maxWidth}px`;
 
 class GraphImage extends React.Component {
   constructor(props) {

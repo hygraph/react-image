@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { srcSet, getWidths, constructURL } from '../src/Utils';
+import { srcSet, getWidths, constructURL, imgSizes } from '../src/Utils';
 
 describe('Utils tests', () => {
   const timeout = 3000;
@@ -17,4 +17,8 @@ describe('Utils tests', () => {
     console.log(srcSetImgs);
   }, timeout);
 
+  test('should get correct imgSizes', async () => {
+    const constructedURL = imgSizes(4480);
+    console.log(constructedURL);
+  }, timeout);
 });
