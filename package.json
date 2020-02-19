@@ -1,11 +1,11 @@
 {
-  "name": "graphcms-image",
-  "version": "1.1.0-beta4",
+  "name": "@burrow/graphcms-image",
+  "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
   "author": "Hugo Meissner <hugomeissner@icloud.com>",
   "scripts": {
-    "build": "babel src --out-dir .",
+    "build": "babel src --out-dir build/",
     "prepare": "npm run build",
     "test": "node_modules/.bin/jest --verbose --coverage"
   },

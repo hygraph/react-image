@@ -2,3 +2,4 @@ node_modules
 /*.js
 storybook-static
 coverage
+build/*.js
