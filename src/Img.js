@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 const Img = props => {
-  const { opacity, onLoad, transitionDelay, ...otherProps } = props
+  const { opacity, onLoad, transitionDelay, ...otherProps } = props;
   return (
     <img
       {...otherProps}
@@ -21,17 +21,17 @@ const Img = props => {
       }}
     />
   )
-}
+};
 
 Img.defaultProps = {
   transitionDelay: '',
   onLoad: null
-}
+};
 
 Img.propTypes = {
   opacity: PropTypes.oneOf([0, 1]).isRequired,
   transitionDelay: PropTypes.string,
   onLoad: PropTypes.func
-}
+};
 
 export default Img
