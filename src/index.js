@@ -128,13 +128,16 @@ class GraphImage extends React.Component {
       style,
       image: { width, height, handle },
       fit,
-      maxWidth,
       withWebp,
       transforms,
       blurryPlaceholder,
       backgroundColor,
       fadeIn,
       baseURI
+    } = this.props;
+
+    let {
+      maxWidth,
     } = this.props;
 
     if (width && height && handle) {
@@ -149,6 +152,12 @@ class GraphImage extends React.Component {
       // construct blurry placeholder url
       const thumbSize = { width: 20, height: 20, fit: 'crop' };
       const thumbSrc = thumbBase(resizeImage(thumbSize))(['blur=amount:2']);
+
+      // If our width is larger than maxWidth (if default maxWidth is used and
+      // component does not have one) then we switch to a maxWidth that is the current-width.
+      if (width > maxWidth) {
+        maxWidth = width;
+      }
 
       // construct srcSet if maxWidth provided
       const srcSetImgs = srcSet(
