@@ -1,4 +1,4 @@
 node_modules
 /*.js
-/*.js.map
 storybook-static
+coverage

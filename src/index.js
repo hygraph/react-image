@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Img from './Img';
-import { srcSet, getWidths } from './Utils';
+import { srcSet, getWidths, constructURL } from './Utils';
 
 if (typeof window !== 'undefined') {
   require('intersection-observer')
@@ -16,23 +16,6 @@ const inImageCache = ({ handle }, shouldCache) => {
   }
   if (shouldCache) {
     imageCache[handle] = true
-  }
-  return false
-};
-
-// check webp support
-let isWebpSupportedCache = null;
-const isWebpSupported = () => {
-  if (isWebpSupportedCache !== null) {
-    return isWebpSupportedCache
-  }
-
-  const elem =
-    typeof window !== `undefined` ? window.document.createElement(`canvas`) : {}
-  if (elem.getContext && elem.getContext(`2d`)) {
-    isWebpSupportedCache =
-      elem.toDataURL(`image/webp`).indexOf(`data:image/webp`) === 0
-    return isWebpSupportedCache
   }
   return false
 };
@@ -75,17 +58,6 @@ const bgColor = backgroundColor =>
 // If used with native height & width from GraphCMS it produces no transform
 const resizeImage = ({ width, height, fit }) =>
   `resize=w:${width},h:${height},fit:${fit}`;
-
-const compressAndWebp = webp => `${webp ? 'output=format:webp/' : ''}compress`;
-
-const constructURL = (handle, withWebp, baseURI) => resize => transforms =>
-  [
-    baseURI,
-    resize,
-    ...transforms,
-    compressAndWebp(isWebpSupported() && withWebp),
-    handle
-  ].join('/');
 
 const imgSizes = maxWidth => `(max-width: ${maxWidth}px) 100vw, ${maxWidth}px`;
 
