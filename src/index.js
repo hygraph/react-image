@@ -153,12 +153,6 @@ class GraphImage extends React.Component {
       const thumbSize = { width: 20, height: 20, fit: 'crop' };
       const thumbSrc = thumbBase(resizeImage(thumbSize))(['blur=amount:2']);
 
-      // If our width is larger than maxWidth (if default maxWidth is used and
-      // component does not have one) then we switch to a maxWidth that is the current-width.
-      if (width > maxWidth) {
-        maxWidth = width;
-      }
-
       // construct srcSet if maxWidth provided
       const srcSetImgs = srcSet(
         srcBase,
