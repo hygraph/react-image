@@ -1,14 +1,25 @@
 {
-  "name": "graphcms-image",
-  "version": "1.1.0-beta4",
+  "name": "@graphcms/react-image",
+  "version": "0.0.0-semantically-released",
   "main": "index.js",
   "license": "MIT",
   "author": "Hugo Meissner <hugomeissner@icloud.com>",
   "scripts": {
-    "build": "babel src --out-dir .",
+    "build": "babel src --out-dir ./ --source-maps",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "prepare": "npm run build"
+  },
+  "release": {
+    "branches": [
+      "main"
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/npm",
+      "@semantic-release/github"
+    ]
   },
   "devDependencies": {
     "@storybook/addon-actions": "^3.3.6",
