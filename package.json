@@ -30,6 +30,7 @@
     "babel-preset-airbnb": "^2.4.0",
     "eslint": "^4.14.0",
     "eslint-config-blazity": "^1.0.4",
+    "prettier": "^2.2.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0"
   },
