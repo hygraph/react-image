@@ -19,23 +19,6 @@ const inImageCache = ({ handle }, shouldCache) => {
   return false
 }
 
-// check webp support
-let isWebpSupportedCache = null
-const isWebpSupported = () => {
-  if (isWebpSupportedCache !== null) {
-    return isWebpSupportedCache
-  }
-
-  const elem =
-    typeof window !== `undefined` ? window.document.createElement(`canvas`) : {}
-  if (elem.getContext && elem.getContext(`2d`)) {
-    isWebpSupportedCache =
-      elem.toDataURL(`image/webp`).indexOf(`data:image/webp`) === 0
-    return isWebpSupportedCache
-  }
-  return false
-}
-
 // Add IntersectionObserver to component
 const listeners = []
 let io
@@ -75,16 +58,12 @@ const bgColor = backgroundColor =>
 const resizeImage = ({ width, height, fit }) =>
   `resize=w:${width},h:${height},fit:${fit}`
 
-const compressAndWebp = webp => `${webp ? 'output=format:webp/' : ''}compress`
+// Filestack supports serving modern formats (like WebP) for supported browsers.
+// See: https://www.filestack.com/docs/api/processing/#auto-image-conversion
+const compressAndWebp = webp => `${webp ? 'auto_image/' : ''}compress`
 
 const constructURL = (handle, withWebp, baseURI) => resize => transforms =>
-  [
-    baseURI,
-    resize,
-    ...transforms,
-    compressAndWebp(isWebpSupported() && withWebp),
-    handle
-  ].join('/')
+  [baseURI, resize, ...transforms, compressAndWebp(withWebp), handle].join('/')
 
 // responsiveness transforms
 const responsiveSizes = size => [
