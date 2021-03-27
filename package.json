@@ -3,7 +3,10 @@
   "version": "0.0.0-semantically-released",
   "main": "index.js",
   "license": "MIT",
-  "author": "Hugo Meissner <hugomeissner@icloud.com>",
+  "author": "GraphCMS",
+  "contributors": [
+    "Hugo Meissner <hugomeissner@icloud.com>"
+  ],
   "scripts": {
     "build": "babel src --out-dir ./ --source-maps",
     "storybook": "start-storybook -p 6006",
@@ -41,5 +44,8 @@
   "dependencies": {
     "intersection-observer": "^0.5.0",
     "prop-types": "^15.6.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
