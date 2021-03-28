@@ -1,10 +1,21 @@
+<h1 align="center">@graphcms/react-image</h1>
+
+<p align="center">Universal lazy-loading, auto-compressed images with React and GraphCMS. Inspired by and based on [gatsby-image](https://github.com/gatsbyjs/gatsby/tree/master/packages/gatsby-image).</p>
+
 <p align="center">
-  <img width="300" src="https://storage.googleapis.com/graphcms-public/GraphCMS%20Image.svg?sanitize=true">
+  <a href="https://npmjs.org/package/@graphcms/react-image">
+    <img src="https://img.shields.io/npm/v/@graphcms/react-image.svg" alt="Version" />
+  </a>
+  <a href="https://npmjs.org/package/@graphcms/react-image">
+    <img src="https://img.shields.io/npm/dw/@graphcms/react-image.svg" alt="Downloads/week" />
+  </a>
+  <a href="https://github.com/GraphCMS/react-image/stargazers">
+    <img src="https://img.shields.io/github/stars/GraphCMS/react-image" alt="Forks on GitHub" />
+  </a>
+  <img src="https://badgen.net/bundlephobia/minzip/@graphcms/react-image" alt="minified + gzip size" />
+  <br/>
+  <a href="https://slack.graphcms.com">Join us on Slack</a> • <a href="https://app.graphcms.com">Login to GraphCMS</a> • <a href="https://twitter.com/GraphCMS">@GraphCMS</a>
 </p>
-
-# @graphcms/react-image
-
-Inspired by and based on [gatsby-image](https://github.com/gatsbyjs/gatsby/tree/master/packages/gatsby-image)
 
 **[Demo](https://graphcms-image.netlify.com/?down=0)**
 
