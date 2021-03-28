@@ -43,6 +43,12 @@ const IndexPage = () => {
 }
 ```
 
+## Install
+
+```bash
+npm install @graphcms/react-image
+```
+
 ## Props
 
 | Name                    | Type                             | Description                                                                                                                                                                                                                                                                                                                                 |
