@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "intersection-observer": "^0.5.0",
-    "prop-types": "^15.6.0"
+    "prop-types": "^15.6.0",
+    "react-helmet": "^6.1.0"
   }
 }
