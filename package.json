@@ -3,11 +3,25 @@
   "version": "1.0.2",
   "main": "index.js",
   "license": "MIT",
-  "author": "Hugo Meissner <hugomeissner@icloud.com>",
+  "author": "GraphCMS",
+  "contributors": [
+    "Hugo Meissner <hugomeissner@icloud.com>"
+  ],
   "scripts": {
     "build": "babel src --out-dir .",
     "prepare": "npm run build",
     "test": "node_modules/.bin/jest --verbose --coverage"
+  },
+  "release": {
+    "branches": [
+      "main"
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/npm",
+      "@semantic-release/github"
+    ]
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
@@ -27,7 +41,9 @@
   },
   "dependencies": {
     "intersection-observer": "^0.5.0",
-    "prop-types": "^15.6.0",
-    "react-helmet": "^6.1.0"
+    "prop-types": "^15.6.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
