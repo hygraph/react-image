@@ -286,7 +286,7 @@ GraphImage.defaultProps = {
   backgroundColor: '',
   fadeIn: true,
   onLoad: null,
-  baseURI: 'https://media.graphcms.com'
+  baseURI: 'https://media.graphassets.com'
 }
 
 GraphImage.propTypes = {

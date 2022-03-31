@@ -73,7 +73,7 @@
     fadeIn?: boolean
     /**
      * Set the base src from where the images are requested.
-     * Base URI Defaults to `https://media.graphcms.com`
+     * Base URI Defaults to `https://media.graphassets.com`
      */
     baseURI?: string
   }
