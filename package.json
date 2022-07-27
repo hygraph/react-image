@@ -3,7 +3,7 @@
   "version": "0.0.0-semantically-released",
   "main": "index.js",
   "license": "MIT",
-  "author": "GraphCMS",
+  "author": "Hygraph",
   "contributors": [
     "Hugo Meissner <hugomeissner@icloud.com>"
   ],
