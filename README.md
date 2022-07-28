@@ -1,6 +1,6 @@
 <h1 align="center">@graphcms/react-image</h1>
 
-<p align="center">Universal lazy-loading, auto-compressed images with React and GraphCMS.</p>
+<p align="center">Universal lazy-loading, auto-compressed images with React and Hygraph.</p>
 
 <p align="center">
   <a href="https://npmjs.org/package/@graphcms/react-image">
@@ -9,12 +9,12 @@
   <a href="https://npmjs.org/package/@graphcms/react-image">
     <img src="https://img.shields.io/npm/dw/@graphcms/react-image.svg" alt="Downloads/week" />
   </a>
-  <a href="https://github.com/GraphCMS/react-image/stargazers">
-    <img src="https://img.shields.io/github/stars/GraphCMS/react-image" alt="Forks on GitHub" />
+  <a href="https://github.com/hygraph/react-image/stargazers">
+    <img src="https://img.shields.io/github/stars/hygraph/react-image" alt="Forks on GitHub" />
   </a>
   <img src="https://badgen.net/bundlephobia/minzip/@graphcms/react-image" alt="minified + gzip size" />
   <br/>
-  <a href="https://graphcms-image.netlify.com/?down=0">Demo</a> • <a href="https://slack.graphcms.com">Join us on Slack</a> • <a href="https://app.graphcms.com">Login to GraphCMS</a> • <a href="https://twitter.com/GraphCMS">@GraphCMS</a>
+  <a href="https://graphcms-image.netlify.com/?down=0">Demo</a> • <a href="https://slack.hygraph.com">Join us on Slack</a> • <a href="https://app.hygraph.com">Login to Hygraph</a> • <a href="https://twitter.com/hygraphcom">@hygraphcom</a>
 </p>
 
 * Resize large images to the size needed by your design.
@@ -38,7 +38,7 @@ const IndexPage = () => {
     width: 800,
     height: 800
   }
-  
+
   return <Image image={asset} maxWidth={800} />
 }
 ```

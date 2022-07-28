@@ -54,7 +54,7 @@ const bgColor = backgroundColor =>
   typeof backgroundColor === 'boolean' ? 'lightgray' : backgroundColor
 
 // We always keep the resize transform to have matching sizes + aspect ratio
-// If used with native height & width from GraphCMS it produces no transform
+// If used with native height & width from Hygraph it produces no transform
 const resizeImage = ({ width, height, fit }) =>
   `resize=w:${width},h:${height},fit:${fit}`
 
