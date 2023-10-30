@@ -83,11 +83,11 @@ const getWidths = (width, maxWidth) => {
   return finalSizes
 }
 
-const srcSet = (srcBase, srcWidths, fit, transforms) =>
+const srcSet = (srcBase, srcWidths, srcHeight, fit, transforms) =>
   srcWidths
     .map(
       width =>
-        `${srcBase([`resize=w:${Math.floor(width)},fit:${fit}`])(
+        `${srcBase([`resize=w:${Math.floor(width)},h:${srcHeight},fit:${fit}`])(
           transforms
         )} ${Math.floor(width)}w`
     )
@@ -190,6 +190,7 @@ class GraphImage extends React.Component {
       const srcSetImgs = srcSet(
         srcBase,
         getWidths(width, maxWidth),
+        height,
         fit,
         transforms
       )
