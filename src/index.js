@@ -1,11 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Img from './Img';
-import { srcSet, getWidths, constructURL, imgSizes } from './Utils';
+import { srcSet, constructURL, imgSizes } from './Utils';
 
 if (typeof window !== 'undefined') {
   require('intersection-observer')
 }
+
+const presetImageSizes = [
+  640,
+  768,
+  1024,
+  1366,
+  1600,
+  1920,
+]
 
 // Cache if we've intersected an image before so we don't
 // lazy-load & fade in on subsequent mounts.
@@ -156,7 +165,7 @@ class GraphImage extends React.Component {
       // construct srcSet if maxWidth provided
       const srcSetImgs = srcSet(
         srcBase,
-        getWidths(width, maxWidth),
+        [...presetImageSizes, width],
         fit,
         transforms
       );
